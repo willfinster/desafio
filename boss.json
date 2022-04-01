@@ -1,0 +1,12 @@
+{
+	"name": "desafio",
+	"description": "",
+	"version": "1.0.0",
+	"homepage": "",
+	"mainsrc": "./src",
+	"projects": [],
+	"dependencies": {
+		"github.com/hashload/horse": "^3.0.1",
+		"https://github.com/gabrielbaltazar/gbswagger": "^3.0.3"
+	}
+}
