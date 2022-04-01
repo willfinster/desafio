@@ -27,7 +27,7 @@ begin
   LTask := TTask.Create(
   procedure
   begin
-    WriteLn('Iniciado serviço.');
+    WriteLn('Iniciado serviço...');
     while True do
     begin
       try

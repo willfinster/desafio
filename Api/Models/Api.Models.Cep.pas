@@ -26,6 +26,7 @@ type
 
     public
       class function ConvertToObjectCep(AObject : TJSonObject; AServer : TEnumCepServers): TCep;
+      class function BuscarCep(ACep: string;AServer: TEnumCepServers): TCep;
   end;
 
   TViaCepStruct = class
@@ -67,6 +68,27 @@ type
 implementation
 
 { TCep }
+
+class function TCep.BuscarCep(ACep: string; AServer: TEnumCepServers): TCep;
+var
+  LJSonObject : TJSonObject;
+begin
+  case AServer of
+    TEnumCepServers.viaCepServer:
+    begin
+      LJSonObject := TUpdateServerStatus.RequestCep('https://ws.apicep.com/cep/'+ACep+'.json');
+      Result := TCep.ConvertToObjectCep(LJSonObject,AServer);
+    end;
+    TEnumCepServers.awesomeServer:
+    begin
+      TUpdateServerStatus.RequestCep('https://cep.awesomeapi.com.br/json/');
+    end;
+    TEnumCepServers.apiCepServer:
+    begin
+      TUpdateServerStatus.RequestCep('viacep.com.br/ws/'+ACep+'/json/');
+    end;
+  end;
+end;
 
 class function TCep.ConvertToObjectCep(AObject: TJSonObject ; AServer : TEnumCepServers): TCep;
 var

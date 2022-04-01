@@ -6,7 +6,6 @@ uses
   System.JSON,
   Horse,
   Horse.GBSwagger,
-  Horse.GBSwagger.Helpers,
   Api.Models.Cep,
   GBSwagger.Path.Attributes;
 
@@ -40,31 +39,10 @@ begin
     FResponse.Status(THTTPStatus.BadRequest).Send('Parâmetro CEP incorreto!');
 
   if TUpdateServerStatus.ViaCepOnline then
-    BuscarCep(LCep,TEnumCepServers.viaCepServer);
+    TCep.BuscarCep(LCep,TEnumCepServers.viaCepServer);
 
 
   FResponse.Send('Consultou');
-end;
-
-function BuscarCep(ACep: string;AServer: TEnumCepServers): TCep;
-var
-  LJSonObject : TJSonObject;
-begin
-  case AServer of
-    TEnumCepServers.viaCepServer:
-    begin
-      LJSonObject := TUpdateServerStatus.RequestCep('https://ws.apicep.com/cep/'+ACep+'.json');
-      Result := TCep.ConvertToObjectCep(LJSonObject);
-    end;
-    TEnumCepServers.awesomeServer:
-    begin
-      TUpdateServerStatus.RequestCep('https://cep.awesomeapi.com.br/json/');
-    end;
-    TEnumCepServers.apiCepServer:
-    begin
-      TUpdateServerStatus.RequestCep('viacep.com.br/ws/'+ACep+'/json/');
-    end;
-  end;
 end;
 
 initialization
