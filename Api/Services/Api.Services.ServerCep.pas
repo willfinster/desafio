@@ -3,7 +3,8 @@ unit Api.Services.ServerCep;
 interface
 
 uses
-  System.SysUtils;
+  System.SysUtils,
+  System.Threading;
 
 type
   TCepThread = record
@@ -13,32 +14,37 @@ type
 
 implementation
 
+uses
+  Api.Services.UpdateServerStatus;
+
 { TCepThread }
 
 class procedure TCepThread.StartServicesVerification;
 var
   LSleepCount : Integer;
+  LTask       : ITask;
 begin
-  while True do
+  LTask := TTask.Create(
+  procedure
   begin
-    try
+    WriteLn('Iniciado serviço.');
+    while True do
+    begin
+      try
+        TUpdateServerStatus.UpdateServerStatus;
 
-      //Todo: Implementar verificação de server 1 e retornar para uma variável global
-      //Todo: Implementar verificação de server 2 e retornar para var global
-      //Todo: Implementar verificação de server 3 e retornar para var global.
-
-
-
-      LSleepCount := 10000;
-      while (LSleepCount > 0) do
-      begin
-        Dec(LSleepCount,100);
-        Sleep(100);
+        LSleepCount := 10000;
+        while (LSleepCount > 0) do
+        begin
+          Dec(LSleepCount,100);
+          Sleep(100);
+        end;
+      except
+        ReleaseExceptionObject;
       end;
-    except
-      ReleaseExceptionObject;
     end;
-  end;
+  end);
+  LTask.Start;
 end;
 
 end.

@@ -21,12 +21,16 @@ begin
   Swagger
     .Info
       .Title('Desafio')
-      .Description('Terceira etapa da seleção para a vaga Delphi / Horse')
+      .Description('Descrição do desafio')
       .Contact
         .Name('William Finsterbusch')
         .Email('will_finster@hotmail.com')
       .&end
     .&end;
+    Writeln('Para consultar a documentação, acesse: http://localhost:9000/swagger/doc/html');
 end;
+
+initialization
+  TSwagController.IniciarDocumentacao;
 
 end.

@@ -12,18 +12,11 @@ uses
   Api.Models.Cep in 'Api\Models\Api.Models.Cep.pas',
   Api.Controller.CepController in 'Api\Controllers\Api.Controller.CepController.pas',
   Api.Services.Utils in 'Api\Services\Api.Services.Utils.pas',
-  Api.Services.ServerCep in 'Api\Services\Api.Services.ServerCep.pas';
+  Api.Services.ServerCep in 'Api\Services\Api.Services.ServerCep.pas',
+  Api.Services.UpdateServerStatus in 'Api\Services\Api.Services.UpdateServerStatus.pas';
 
 begin
-  TSwagController.IniciarDocumentacao;
-
   THorse.Use(HorseSwagger);
-
-//  THorse.Get('/ping',
-//    procedure(Req: THorseRequest; Res: THorseResponse; Next: TProc)
-//    begin
-//      Res.Send('pong');
-//    end);
 
   TCepThread.StartServicesVerification;
 

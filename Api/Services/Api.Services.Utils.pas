@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils,
-
+  IPPeerClient,
   REST.Client;
 
 type
@@ -31,8 +31,12 @@ begin
       LRequest.Client.HandleRedirects := True;
       LRequest.Timeout                := 10000;
       LRequest.Client.BaseURL         := AEndPoint;
-    except on E: Exception do
-      //tODO: IMPLEMENTAR CONSOLELOG
+    except
+      on E: Exception do
+      begin
+        Writeln(E.Message);
+        raise;
+      end;
     end;
   finally
     Result := LRequest;
