@@ -4,12 +4,9 @@ interface
 
 uses
   System.SysUtils,
+  System.Classes,
   System.JSON,
-
-  REST.Json,
-  REST.Client;
-
-  //Api.Models.Cep;
+  System.Threading, REST.Client;
 
 type
   {$SCOPEDENUMS ON}
@@ -32,7 +29,7 @@ type
     class property ViaCepOnline     : Boolean read FViaCepOnline;
 
     class procedure UpdateServerStatus;
-    class function RequestCep(AEndPoint: string): TJSonObject; overload;
+    class function RequestCep(AEndPoint: string): TJSonObject;
   end;
 
 implementation
@@ -45,36 +42,22 @@ uses
 class procedure TUpdateServerStatus.ServerApiCepOnline;
 begin
   FApiCepOnline := RequestCepStatus('https://ws.apicep.com/cep/01001000.json');
-  if FApiCepOnline then
-    Writeln('ApiCep: Online')
-  else
-    Writeln('ApiCep: Offline')
 end;
 
 class procedure TUpdateServerStatus.ServerAwesomeApiOnline;
 begin
   FAwesomeApiOnline := RequestCepStatus('https://cep.awesomeapi.com.br/json/01001000');
-  if FAwesomeApiOnline then
-    Writeln('Awesome Api: Online')
-  else
-    Writeln('Awesome Api: Offline')
 end;
 
 class procedure TUpdateServerStatus.ServerViaCepOnline;
 begin
   FViaCepOnline := RequestCepStatus('viacep.com.br/ws/01001000/json/');
-  if FViaCepOnline then
-    Writeln('ViaCep: Online')
-  else
-    Writeln('ViaCep: Offline')
 end;
 
 class function TUpdateServerStatus.RequestCepStatus(AEndPoint : string): Boolean;
 var
   LRequest : TRESTRequest;
 begin
-  Result := False;
-  Writeln('Consultando Status server: '+AEndPoint);
   LRequest := TUtils.CriarRequest(AEndPoint);
   try
     try
@@ -82,7 +65,7 @@ begin
       if LRequest.Response.StatusCode = 200 then
         Result := True;
     except on E: Exception do
-      raise;
+      Writeln(E.Message);
     end;
   finally
     LRequest.Free;
@@ -92,19 +75,24 @@ end;
 class function TUpdateServerStatus.RequestCep(AEndPoint: string): TJSonObject;
 var
   LRequest : TRESTRequest;
+  LJSonValue : TJsonValue;
 begin
-  Writeln('Requisição do client: '+AEndPoint);
+  Writeln(DateTimeToStr(Now)+' - Requisição do client: '+AEndPoint);
   LRequest := TUtils.CriarRequest(AEndPoint);
   try
     try
       LRequest.Execute;
       if LRequest.Response.StatusCode = 200 then
-        Result := TJSONObject.ParseJsonValue(LRequest.Response.Content) as TJSONObject;
+      begin
+        LJSonValue := TJSONObject.ParseJsonValue(LRequest.Response.Content);
+        Result := LJSonValue as TJSonObject;
+      end;
     except on E: Exception do
       raise;
     end;
   finally
     LRequest.Free;
+    //LJSonValue.Free;
   end;
 end;
 

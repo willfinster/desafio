@@ -3,6 +3,7 @@ unit Api.Models.Cep;
 interface
 
 uses
+  System.SysUtils,
   System.JSON,
   REST.Json,
 
@@ -25,124 +26,70 @@ type
       property uf           : string  read Fuf          write Fuf;
 
     public
-      class function ConvertToObjectCep(AObject : TJSonObject; AServer : TEnumCepServers): TCep;
-      class function BuscarCep(ACep: string;AServer: TEnumCepServers): TCep;
-  end;
-
-  TViaCepStruct = class
-    cep         : string;
-    logradouro  : string;
-    complemento : string;
-    bairro      : string;
-    localidade  : string;
-    uf          : string;
-    ibge        : string;
-    gia         : string;
-    ddd         : string;
-    siafi       : string;
-  end;
-
-  TAwesomeApiStruct = class
-    cep          : string;
-    address_type : string;
-    address_name : string;
-    address      : string;
-    district     : string;
-    state        : string;
-    city         : string;
-    lat          : string;
-    lng          : string;
-    ddd          : string;
-    city_ibge    : string;
-  end;
-
-  TApiCepStruct = class
-    status       : string;
-    code         : string;
-    state        : string;
-    city         : string;
-    district     : string;
-    address      : string;
+      class function ConvertToObjectCep(AObject : TJSonObject; AServer : TEnumCepServers): TJSonObject;
+      class function BuscarCep(ACep: string;AServer: TEnumCepServers): TJSonObject;
   end;
 
 implementation
 
 { TCep }
 
-class function TCep.BuscarCep(ACep: string; AServer: TEnumCepServers): TCep;
+class function TCep.BuscarCep(ACep: string; AServer: TEnumCepServers): TJSonObject;
 var
   LJSonObject : TJSonObject;
 begin
-  case AServer of
-    TEnumCepServers.viaCepServer:
-    begin
-      LJSonObject := TUpdateServerStatus.RequestCep('https://ws.apicep.com/cep/'+ACep+'.json');
-      Result := TCep.ConvertToObjectCep(LJSonObject,AServer);
+  try
+    case AServer of
+      TEnumCepServers.viaCepServer:  LJSonObject := TUpdateServerStatus.RequestCep('viacep.com.br/ws/'+ACep+'/json/');
+      TEnumCepServers.awesomeServer: LJSonObject := TUpdateServerStatus.RequestCep('https://cep.awesomeapi.com.br/json/'+ACep);
+      TEnumCepServers.apiCepServer:  LJSonObject := TUpdateServerStatus.RequestCep('https://ws.apicep.com/cep/'+ACep+'.json');
     end;
-    TEnumCepServers.awesomeServer:
-    begin
-      TUpdateServerStatus.RequestCep('https://cep.awesomeapi.com.br/json/');
-    end;
-    TEnumCepServers.apiCepServer:
-    begin
-      TUpdateServerStatus.RequestCep('viacep.com.br/ws/'+ACep+'/json/');
-    end;
+    LJSonObject := ConvertToObjectCep(LJSonObject,AServer);
+    Result := LJSonObject;
+  except on E: Exception do
+    raise;
   end;
 end;
 
-class function TCep.ConvertToObjectCep(AObject: TJSonObject ; AServer : TEnumCepServers): TCep;
+class function TCep.ConvertToObjectCep(AObject: TJSonObject ; AServer : TEnumCepServers): TJSonObject;
 var
-  LViaCep     : TViaCepStruct;
-  LAwesomeApi : TAwesomeApiStruct;
-  LApiCep     : TApiCepStruct;
-  LCep        : TCep;
+  LCep : TCep;
 begin
-  case AServer of
-    TEnumCepServers.viaCepServer:
-    begin
-      LViaCep := TJson.JSonToObject<TViaCepStruct>(AObject);
-      try
-        LCep.cep      := LViaCep.cep;
-        LCep.endereco := LViaCep.logradouro;
-        LCep.bairro   := LViaCep.bairro;
-        LCep.cidade   := LViaCep.localidade;
-        LCep.uf       := LViaCep.uf;
-        Result := LCep;
-      finally
-        LViaCep.Free;
-        LCep.Free;
+  LCep := TCep.Create;
+  try
+    try
+      case AServer of
+        TEnumCepServers.viaCepServer:
+        begin
+          LCep.cep      := AObject.GetValue<string>('cep');
+          LCep.endereco := AObject.GetValue<string>('logradouro');
+          LCep.bairro   := AObject.GetValue<string>('bairro');
+          LCep.cidade   := AObject.GetValue<string>('localidade');
+          LCep.uf       := AObject.GetValue<string>('uf');
+        end;
+        TEnumCepServers.awesomeServer:
+        begin
+          LCep.cep      := AObject.GetValue<string>('cep');
+          LCep.endereco := AObject.GetValue<string>('address');
+          LCep.bairro   := AObject.GetValue<string>('district');
+          LCep.cidade   := AObject.GetValue<string>('city');
+          LCep.uf       := AObject.GetValue<string>('state');
+        end;
+        TEnumCepServers.apiCepServer:
+        begin
+          LCep.cep      := AObject.GetValue<string>('code');
+          LCep.endereco := AObject.GetValue<string>('address');
+          LCep.bairro   := AObject.GetValue<string>('district');
+          LCep.cidade   := AObject.GetValue<string>('city');
+          LCep.uf       := AObject.GetValue<string>('state');
+        end;
       end;
+      Result := TJson.ObjectToJsonObject(LCep);
+    except on E: Exception do
+      raise;
     end;
-    TEnumCepServers.awesomeServer:
-    begin
-      LAwesomeApi := TJson.JSonToObject<TAwesomeApiStruct>(AObject);
-      try
-        LCep.cep      := LAwesomeApi.cep;
-        LCep.endereco := LAwesomeApi.address;
-        LCep.bairro   := LAwesomeApi.district;
-        LCep.cidade   := LAwesomeApi.city;
-        LCep.uf       := LAwesomeApi.state;
-        Result := LCep;
-      finally
-        LAwesomeApi.Free;
-        LCep.Free;
-      end;
-    end;
-    TEnumCepServers.apiCepServer:
-    begin
-      LApiCep := TJson.JSonToObject<TApiCepStruct>(AObject);
-      try
-        LCep.cep      := LApiCep.code;
-        LCep.endereco := LApiCep.address;
-        LCep.bairro   := LApiCep.district;
-        LCep.cidade   := LApiCep.city;
-        LCep.uf       := LApiCep.state;
-        Result := LCep;
-      finally
-        LApiCep.Free;
-        LCep.Free;
-      end;
-    end;
+  finally
+    LCep.Free;
   end;
 end;
 

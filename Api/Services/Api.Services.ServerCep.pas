@@ -3,11 +3,13 @@ unit Api.Services.ServerCep;
 interface
 
 uses
+  Horse,
   System.SysUtils,
+  System.Classes,
   System.Threading;
 
 type
-  TCepThread = record
+  TCepService = class
     public
       class procedure StartServicesVerification; static;
   end;
@@ -15,22 +17,25 @@ type
 implementation
 
 uses
-  Api.Services.UpdateServerStatus;
+  Api.Services.UpdateServerStatus, Api.Services.Utils;
 
 { TCepThread }
 
-class procedure TCepThread.StartServicesVerification;
+class procedure TCepService.StartServicesVerification;
 var
   LSleepCount : Integer;
   LTask       : ITask;
 begin
+
+
   LTask := TTask.Create(
   procedure
   begin
-    WriteLn('Iniciado serviço...');
+    Writeln(DateTimeToStr(Now)+' - Iniciado serviço...');
     while True do
     begin
       try
+        Writeln(DateTimeToStr(Now)+' - Consultando Status nos servidores...');
         TUpdateServerStatus.UpdateServerStatus;
 
         LSleepCount := 10000;
@@ -46,5 +51,8 @@ begin
   end);
   LTask.Start;
 end;
+
+initialization
+  TCepService.StartServicesVerification;
 
 end.

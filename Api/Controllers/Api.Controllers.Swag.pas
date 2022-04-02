@@ -1,4 +1,4 @@
-unit Api.Controllers.SwagController;
+unit Api.Controllers.Swag;
 
 interface
 
@@ -12,7 +12,7 @@ implementation
 
 uses
   Horse,
-  Horse.GBSwagger;
+  Horse.GBSwagger, Api.Services.Utils;
 
 { TSwagController }
 
@@ -27,6 +27,8 @@ begin
         .Email('will_finster@hotmail.com')
       .&end
     .&end;
+
+
     Writeln('Para consultar a documentação, acesse: http://localhost:9000/swagger/doc/html');
 end;
 
