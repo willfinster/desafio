@@ -46,7 +46,7 @@ end;
 
 class procedure TUpdateServerStatus.ServerApiCepOnline;
 begin
-  FApiCepOnline := RequestCepStatus('https://ws.apicep.com/cep/01001000.json');
+  FApiCepOnline := False;//RequestCepStatus('https://ws.apicep.com/cep/01001000.json');
 end;
 
 class procedure TUpdateServerStatus.ServerAwesomeApiOnline;
