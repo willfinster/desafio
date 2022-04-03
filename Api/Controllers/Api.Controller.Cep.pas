@@ -58,8 +58,17 @@ begin
     FResponse.Status(500);
     Exit;
   end;
-
-  FResponse.Send(LCep.ToJSON);
+  try
+    if LCep.GetValue<string>('cep') = '' then
+    begin
+      FResponse.Status(404);
+      Exit;
+    end
+    else
+      FResponse.Send(LCep.ToJSON);
+  finally
+    LCep.Free;
+  end;
 end;
 
 initialization

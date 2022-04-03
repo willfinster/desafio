@@ -61,27 +61,27 @@ begin
       case AServer of
         TEnumCepServers.viaCepServer:
         begin
-          LCep.cep      := AObject.GetValue<string>('cep');
-          LCep.endereco := AObject.GetValue<string>('logradouro');
-          LCep.bairro   := AObject.GetValue<string>('bairro');
-          LCep.cidade   := AObject.GetValue<string>('localidade');
-          LCep.uf       := AObject.GetValue<string>('uf');
+          LCep.cep      := AObject.GetValue<string>('cep','');
+          LCep.endereco := AObject.GetValue<string>('logradouro','');
+          LCep.bairro   := AObject.GetValue<string>('bairro','');
+          LCep.cidade   := AObject.GetValue<string>('localidade','');
+          LCep.uf       := AObject.GetValue<string>('uf','');
         end;
         TEnumCepServers.awesomeServer:
         begin
-          LCep.cep      := AObject.GetValue<string>('cep');
-          LCep.endereco := AObject.GetValue<string>('address');
-          LCep.bairro   := AObject.GetValue<string>('district');
-          LCep.cidade   := AObject.GetValue<string>('city');
-          LCep.uf       := AObject.GetValue<string>('state');
+          LCep.cep      := AObject.GetValue<string>('cep','');
+          LCep.endereco := AObject.GetValue<string>('address','');
+          LCep.bairro   := AObject.GetValue<string>('district','');
+          LCep.cidade   := AObject.GetValue<string>('city','');
+          LCep.uf       := AObject.GetValue<string>('state','');
         end;
         TEnumCepServers.apiCepServer:
         begin
-          LCep.cep      := AObject.GetValue<string>('code');
-          LCep.endereco := AObject.GetValue<string>('address');
-          LCep.bairro   := AObject.GetValue<string>('district');
-          LCep.cidade   := AObject.GetValue<string>('city');
-          LCep.uf       := AObject.GetValue<string>('state');
+          LCep.cep      := AObject.GetValue<string>('code','');
+          LCep.endereco := AObject.GetValue<string>('address','');
+          LCep.bairro   := AObject.GetValue<string>('district','');
+          LCep.cidade   := AObject.GetValue<string>('city','');
+          LCep.uf       := AObject.GetValue<string>('state','');
         end;
       end;
       Result := TJson.ObjectToJsonObject(LCep);

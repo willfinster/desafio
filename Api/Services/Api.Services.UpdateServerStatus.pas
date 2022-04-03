@@ -39,6 +39,11 @@ uses
 
 { TUpdateServerStatus }
 
+class procedure TUpdateServerStatus.ServerViaCepOnline;
+begin
+  FViaCepOnline := False; //RequestCepStatus('viacep.com.br/ws/01001000/json/');
+end;
+
 class procedure TUpdateServerStatus.ServerApiCepOnline;
 begin
   FApiCepOnline := RequestCepStatus('https://ws.apicep.com/cep/01001000.json');
@@ -47,11 +52,6 @@ end;
 class procedure TUpdateServerStatus.ServerAwesomeApiOnline;
 begin
   FAwesomeApiOnline := RequestCepStatus('https://cep.awesomeapi.com.br/json/01001000');
-end;
-
-class procedure TUpdateServerStatus.ServerViaCepOnline;
-begin
-  FViaCepOnline := RequestCepStatus('viacep.com.br/ws/01001000/json/');
 end;
 
 class function TUpdateServerStatus.RequestCepStatus(AEndPoint : string): Boolean;
@@ -92,7 +92,6 @@ begin
     end;
   finally
     LRequest.Free;
-    //LJSonValue.Free;
   end;
 end;
 
