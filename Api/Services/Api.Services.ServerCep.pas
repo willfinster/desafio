@@ -26,8 +26,6 @@ var
   LSleepCount : Integer;
   LTask       : ITask;
 begin
-
-
   LTask := TTask.Create(
   procedure
   begin
@@ -44,8 +42,8 @@ begin
           Dec(LSleepCount,100);
           Sleep(100);
         end;
-      except
-        ReleaseExceptionObject;
+      except on E: Exception do
+        Writeln(DateTimeToStr(Now)+' - '+E.Message);
       end;
     end;
   end);

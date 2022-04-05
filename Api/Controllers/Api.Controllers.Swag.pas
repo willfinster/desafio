@@ -21,7 +21,7 @@ begin
   Swagger
     .Info
       .Title('Desafio')
-      .Description('Descrição do desafio')
+      .Description('Desafio para processo referente a vaga Delphi / Horse')
       .Contact
         .Name('William Finsterbusch')
         .Email('will_finster@hotmail.com')

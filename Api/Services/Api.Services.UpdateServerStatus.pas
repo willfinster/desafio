@@ -20,9 +20,9 @@ type
 
   private
     class function RequestCepStatus(AEndPoint: string): Boolean;
-    class procedure ServerViaCepOnline;
-    class procedure ServerApiCepOnline;
-    class procedure ServerAwesomeApiOnline;
+    class function ServerViaCepOnline : Boolean;
+    class function ServerApiCepOnline : Boolean;
+    class function ServerAwesomeApiOnline : Boolean;
   public
     class property ApiCepOnline     : Boolean read FApiCepOnline;
     class property AwesomeApiOnline : Boolean read FAwesomeApiOnline;
@@ -39,25 +39,26 @@ uses
 
 { TUpdateServerStatus }
 
-class procedure TUpdateServerStatus.ServerViaCepOnline;
+class function TUpdateServerStatus.ServerViaCepOnline : Boolean;
 begin
-  FViaCepOnline := False; //RequestCepStatus('viacep.com.br/ws/01001000/json/');
+  Result := RequestCepStatus('viacep.com.br/ws/01001000/json/');
 end;
 
-class procedure TUpdateServerStatus.ServerApiCepOnline;
+class function TUpdateServerStatus.ServerApiCepOnline : Boolean;
 begin
-  FApiCepOnline := False;//RequestCepStatus('https://ws.apicep.com/cep/01001000.json');
+  Result := RequestCepStatus('https://ws.apicep.com/cep/01001000.json');
 end;
 
-class procedure TUpdateServerStatus.ServerAwesomeApiOnline;
+class function TUpdateServerStatus.ServerAwesomeApiOnline : Boolean;
 begin
-  FAwesomeApiOnline := RequestCepStatus('https://cep.awesomeapi.com.br/json/01001000');
+  Result := RequestCepStatus('https://cep.awesomeapi.com.br/json/01001000');
 end;
 
 class function TUpdateServerStatus.RequestCepStatus(AEndPoint : string): Boolean;
 var
   LRequest : TRESTRequest;
 begin
+  Result := False;
   LRequest := TUtils.CriarRequest(AEndPoint);
   try
     try
@@ -97,9 +98,9 @@ end;
 
 class procedure TUpdateServerStatus.UpdateServerStatus;
 begin
-  ServerViaCepOnline;
-  ServerApiCepOnline;
-  ServerAwesomeApiOnline;
+  FViaCepOnline     := ServerViaCepOnline;
+  FApiCepOnline     := ServerApiCepOnline;
+  FAwesomeApiOnline := ServerAwesomeApiOnline;
 end;
 
 end.
